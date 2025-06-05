@@ -1,0 +1,1120 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Cartinha Interativa com Celebração</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Great+Vibes&family=Roboto:wght@400;700&display=swap');
+
+  :root {
+    --beige-soft: #f3e7d3;
+    --beige-warm: #f4e4d0;
+    --text-color: #5b4636;
+    --button-bg: #c28e73;
+    --button-hover-bg: #a66e4a;
+    --button-text-color: #fff;
+    --button-font: 'Great Vibes', cursive;
+    --flower-opacity: 0.95;
+    --shadow-soft: rgba(0, 0, 0, 0.1);
+    --gallery-bg-opacity: 0.85;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+  body, html {
+    margin: 0; padding: 0; height: 100%;
+    background: linear-gradient(135deg, #fff9f2, #f9f1e7);
+    font-family: 'Roboto', sans-serif;
+    color: var(--text-color);
+    overflow-x: hidden;
+  }
+
+  #app {
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+    position: relative;
+    background: var(--beige-soft);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    text-align: center;
+  }
+
+  #confetti-container {
+    position: fixed;
+    top: 0; left: 0; right:0; bottom:0;
+    pointer-events: none;
+    z-index: 1000;
+    overflow: visible;
+  }
+
+  #balloon-container {
+    position: fixed;
+    top: 10%;
+    left: 50%;
+    transform: translateX(-50%) scale(1) translateY(0);
+    z-index: 1100;
+    pointer-events: none;
+    width: 300px;
+    height: 400px;
+    animation: balloonZoom 4s forwards ease-in-out;
+  }
+
+  @keyframes balloonZoom {
+    0% {
+      transform: translateX(-50%) scale(0.8) translateY(20vh);
+      opacity: 0;
+    }
+    50% {
+      opacity: 1;
+    }
+    100% {
+      transform: translateX(-50%) scale(1.4) translateY(-10vh);
+      opacity: 0;
+    }
+  }
+
+  .balloon {
+    width: 80px;
+    height: 120px;
+    margin: 5px;
+    filter: drop-shadow(1px 1px 2px rgba(0,0,0,0.15));
+    transform-origin: center bottom;
+    animation: floating 4s ease-in-out forwards;
+  }
+  .balloon:nth-child(1) { animation-delay: 0s; }
+  .balloon:nth-child(2) { animation-delay: 0.5s; }
+  .balloon:nth-child(3) { animation-delay: 1s; }
+  .balloon:nth-child(4) { animation-delay: 1.5s; }
+  .balloon:nth-child(5) { animation-delay: 2s; }
+
+  @keyframes floating {
+    0%   { transform: translateY(0) scale(1); }
+    50%  { transform: translateY(-20px) scale(1.05); }
+    100% { transform: translateY(0) scale(1); }
+  }
+
+  .confetto {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+    animation: confettiFall 3s linear forwards;
+    transform-origin: center;
+  }
+  .confetto:nth-child(odd) {
+    background-color: #f5a28c;
+  }
+  .confetto:nth-child(even) {
+    background-color: #ffcfcf;
+  }
+  @keyframes confettiFall {
+    0% {
+      transform: translateY(0) rotate(0deg);
+      opacity: 1;
+    }
+    100% {
+      transform: translateY(110vh) rotate(720deg);
+      opacity: 0;
+    }
+  }
+
+  #message {
+    margin-top: 50px;
+    color: #855c3b;
+    font-size: 2.4rem;
+    max-width: 70vw;
+    opacity: 0;
+    animation-fill-mode: forwards;
+    font-family: 'Great Vibes', cursive;
+    letter-spacing: 0.08em;
+    text-shadow: 1px 1px 3px rgba(207, 180, 133, 0.6);
+    text-align: center;
+  }
+  .fade-in-slow {
+    animation: fadeInSlow 4s forwards;
+  }
+  @keyframes fadeInSlow {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .fade-out {
+    animation: fadeOut 2s forwards;
+  }
+  @keyframes fadeOut {
+    from { opacity: 1; }
+    to { opacity: 0; }
+  }
+
+  #letter-container {
+    position: relative;
+    width: 460px;
+    max-width: 90vw;
+    height: 580px;
+    background: var(--beige-soft);
+    border-radius: 22px;
+    box-shadow:
+      0 10px 25px var(--shadow-soft),
+      inset 0 0 45px rgba(255 255 255 / 0.7);
+    opacity: 0;
+    transform-style: preserve-3d;
+    cursor: pointer;
+    user-select: none;
+    padding: 40px 35px 90px 35px;
+    overflow: hidden;
+    font-family: 'Great Vibes', cursive;
+    color: var(--text-color);
+    transition: box-shadow 0.5s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+  }
+  #letter-container.interactive:hover {
+    box-shadow:
+      0 20px 50px rgba(160, 120, 80, 0.4),
+      0 0 40px #f3e2d2;
+  }
+  .fade-in-letter {
+    animation: fadeInLetter 2s forwards;
+  }
+  @keyframes fadeInLetter {
+    from {
+      opacity: 0;
+      transform: translateY(40px) scale(0.9) rotateX(15deg);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1) rotateX(0);
+    }
+  }
+
+  /* Detailed flowers in corner */
+  #flower-decoration {
+    pointer-events: none;
+    position: absolute;
+    bottom: 25px;
+    right: 20px;
+    width: 180px;
+    height: 180px;
+    opacity: var(--flower-opacity);
+    filter: drop-shadow(0 3px 6px rgba(0,0,0,0.18));
+  }
+  #flower-decoration svg {
+    animation: flowerFloat 8s ease-in-out infinite;
+    transform-origin: center;
+    filter: drop-shadow(0 0 6px rgba(187,151,130,0.6));
+  }
+  @keyframes flowerFloat {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-9px) rotate(3deg); }
+  }
+  .flower-peony {
+    fill: #e9b8b7;
+    filter: drop-shadow(0 1px 2px rgba(232,184,183,0.75));
+    animation: petalPulse 5s ease-in-out infinite;
+  }
+  .flower-lily {
+    fill: #afeadb;
+    filter: drop-shadow(0 1px 2px rgba(175,234,219,0.75));
+    animation: petalPulse 6.5s ease-in-out infinite;
+  }
+  @keyframes petalPulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.82; transform: scale(1.1); }
+  }
+
+  #letter-front {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    border-radius: 18px;
+    background: linear-gradient(145deg, #f7e9d7, #f1dacc);
+    border: 2px solid #d4bfa4;
+    box-shadow:
+      0 10px 20px rgba(0,0,0,0.12),
+      inset 0 0 32px 9px #fef5e7;
+    overflow: hidden;
+  }
+  #letter-front::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 60px;
+    background: linear-gradient(135deg, #e8d9bf, #dec4a3);
+    border-bottom: 2px solid #c5ab7d;
+    border-radius: 18px 18px 0 0;
+    box-shadow: inset 0 5px 14px #fff9f1;
+  }
+  #letter-front::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 15px;
+    width: calc(100% - 30px);
+    height: 24px;
+    background: linear-gradient(135deg, #decbab, #c4ab88);
+    border-bottom-left-radius: 18px;
+    border-bottom-right-radius: 18px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+  }
+
+  #letter-front .decorations {
+    position: absolute;
+    top: 18px;
+    left: 0;
+    width: 100%;
+    height: 28px;
+    display: flex;
+    justify-content: center;
+    gap: 18px;
+  }
+  #letter-front .decorations div {
+    width: 15px;
+    height: 5px;
+    background: #c9ac83;
+    border-radius: 3px;
+    filter: drop-shadow(0 2px 0 #e9dcbc);
+    transform-origin: center;
+    animation: decorationPulse 4s ease-in-out infinite;
+  }
+  #letter-front .decorations div:nth-child(2) {
+    animation-delay: 1.2s;
+    width: 12px;
+    height: 4px;
+    background: #b89d6e;
+  }
+  #letter-front .decorations div:nth-child(3) {
+    animation-delay: 2.1s;
+    width: 14px;
+    height: 4.5px;
+  }
+  @keyframes decorationPulse {
+    0%, 100% { opacity: 0.65; }
+    50% { opacity: 1; }
+  }
+
+  #letter-open {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 80px; /* footer space */
+    background: var(--beige-soft);
+    border-radius: 18px;
+    padding: 55px 45px 40px 45px;
+    box-shadow:
+      inset 0 0 22px 9px rgba(255 255 255 / 0.88),
+      0 14px 45px rgba(0,0,0,0.15);
+    overflow-y: auto;
+    font-family: 'Great Vibes', cursive;
+    font-size: 1.7rem;
+    line-height: 1.6;
+    color: #6b4f3c;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateZ(40px);
+    transition: opacity 0.8s ease;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  #letter-open.visible {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  #letter-open p {
+    animation: textFadeSlide 3.2s ease forwards;
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  @keyframes textFadeSlide {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  #letter-open::-webkit-scrollbar {
+    width: 8px;
+  }
+  #letter-open::-webkit-scrollbar-track {
+    background: #f3e7d0;
+  }
+  #letter-open::-webkit-scrollbar-thumb {
+    background: #c7a96c;
+    border-radius: 4px;
+  }
+
+  /* Close Button with floral icon and animation */
+  #close-letter-btn {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: var(--button-bg);
+    color: var(--button-text-color);
+    font-family: var(--button-font);
+    font-weight: 700;
+    font-size: 2rem;
+    padding: 12px 48px 12px 60px;
+    border-radius: 48px;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 5px 20px rgba(194, 142, 110, 0.85);
+    text-shadow: 0 1px 1px rgba(0,0,0,0.3);
+    user-select: none;
+    display: none;
+    align-items: center;
+    gap: 10px;
+    outline-offset: 3px;
+    animation: fadeSlideUpIn 0.7s ease forwards;
+  }
+  #close-letter-btn svg {
+    width: 30px;
+    height: 30px;
+    fill: #fef1e7;
+    filter: drop-shadow(0 0 3px #af7c66);
+    flex-shrink: 0;
+  }
+  #close-letter-btn:hover, #close-letter-btn:focus {
+    background-color: var(--button-hover-bg);
+  }
+  @keyframes fadeSlideUpIn {
+    from { opacity: 0; transform: translate(-50%, 30px);}
+    to { opacity: 1; transform: translate(-50%, 0);}
+  }
+
+  /* Library button after close with flower details */
+
+  #giant-library-btn {
+    position: fixed;
+    bottom: 16vh;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 2.8rem;
+    padding: 18px 64px 18px 64px;
+    border-radius: 48px;
+    box-shadow: 0 6px 22px rgba(194, 142, 110, 0.55);
+    animation: fadeSlideUpIn 1.4s ease forwards, pulseGlow 2.5s ease-in-out infinite;
+    z-index: 1600;
+    user-select: none;
+    display: none;
+    background-color: var(--button-bg);
+    color: var(--button-text-color);
+    font-family: var(--button-font);
+    font-weight: 700;
+    border: none;
+    cursor: pointer;
+    text-shadow: 0 1px 1px rgba(0,0,0,0.3);
+    align-items: center;
+    gap: 16px;
+    display: flex;
+    justify-content: center;
+    position: relative;
+  }
+  #giant-library-btn svg {
+    width: 30px;
+    height: 30px;
+    fill: #fef1e7;
+    filter: drop-shadow(0 0 4px #af7c66);
+    flex-shrink: 0;
+    animation: flowerRotate 12s linear infinite;
+  }
+  #giant-library-btn:hover, #giant-library-btn:focus {
+    background-color: var(--button-hover-bg);
+  }
+
+  /* Additional flower decoration on the giant library button */
+  #giant-library-btn::before {
+    content: '';
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    width: 22px;
+    height: 22px;
+    transform: translateY(-50%);
+    background: url('https://i.imgur.com/LcqnL2C.png') no-repeat center;
+    background-size: contain;
+    filter: drop-shadow(0 0 3px #af7c66);
+    animation: flowerBounce 3s ease-in-out infinite;
+    pointer-events: none;
+  }
+
+  @keyframes flowerBounce {
+    0%, 100% {
+      transform: translateY(-50%) translateY(0);
+    }
+    50% {
+      transform: translateY(-50%) translateY(-6px);
+    }
+  }
+
+  @keyframes pulseGlow {
+    0%, 100% {
+      box-shadow: 0 12px 42px rgba(161, 112, 52, 0.7);
+    }
+    50% {
+      box-shadow: 0 14px 54px rgba(208, 147, 84, 1);
+    }
+  }
+
+  @keyframes scalePulse {
+    0%, 100% {
+      transform: translateX(-50%) scale(1);
+    }
+    50% {
+      transform: translateX(-50%) scale(1.05);
+    }
+  }
+  @keyframes flowerRotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+
+  /* Gallery overlay */
+  #gallery-overlay {
+    position: fixed;
+    top: 0; left: 0; right:0; bottom: 0;
+    background: url('https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80') no-repeat center center fixed;
+    background-size: cover;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.8s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 22px;
+    z-index: 1800;
+    padding: 24px 0;
+  }
+  #gallery-overlay.visible {
+    opacity: var(--gallery-bg-opacity);
+    visibility: visible;
+    backdrop-filter: brightness(0.85) saturate(0.9);
+  }
+
+  /* Gallery header text */
+  #gallery-header {
+    color: #fff;
+    font-family: 'Great Vibes', cursive;
+    font-size: 3.6rem;
+    text-shadow: 0 0 16px rgba(22, 9, 2, 0.7);
+    user-select: none;
+  }
+
+  /* Gallery container as slider */
+  #gallery {
+    position: relative;
+    width: 70vw;
+    max-width: 900px;
+    height: 500px;
+    border-radius: 28px;
+    overflow: hidden;
+    box-shadow: 0 14px 38px rgba(0,0,0,0.65);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+  }
+  #gallery-image {
+    width: 100%;
+    height: 100%;
+    border-radius: 28px;
+    object-fit: cover;
+    opacity: 0;
+    transition: opacity 0.8s ease;
+  }
+  #gallery-image.visible {
+    opacity: 1;
+    z-index: 2100;
+  }
+  .gallery-nav-btn {
+    position: relative;
+    background-color: rgba(255 255 255 / 0.9);
+    border: none;
+    border-radius: 50%;
+    padding: 14px;
+    width: 48px;
+    height: 48px;
+    cursor: pointer;
+    box-shadow: 0 3px 10px rgba(161, 112, 52, 0.7);
+    user-select: none;
+    transition: background-color 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .gallery-nav-btn svg {
+    width: 24px;
+    height: 24px;
+    fill: var(--button-bg);
+  }
+  .gallery-nav-btn:hover,
+  .gallery-nav-btn:focus {
+    background-color: var(--button-bg);
+  }
+  .gallery-nav-btn:hover svg,
+  .gallery-nav-btn:focus svg {
+    fill: var(--button-text-color);
+  }
+  #gallery-prev-btn {
+    left: 16px;
+  }
+  #gallery-next-btn {
+    right: 16px;
+  }
+
+  /* Gallery close button */
+  #gallery-close-btn {
+    position: fixed;
+    top: 24px;
+    right: 28px;
+    background: rgba(255 255 255 / 0.85);
+    font-family: 'Great Vibes', cursive;
+    font-weight: 700;
+    font-size: 2.8rem;
+    padding: 8px 24px;
+    border-radius: 40px;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgba(161, 112, 52, 0.7);
+    color: #a8673c;
+    user-select: none;
+    transition: background-color 0.4s ease, color 0.4s ease;
+    z-index: 2200;
+    box-shadow: 0 4px 14px rgba(161, 112, 52, 0.85);
+  }
+  #gallery-close-btn:hover, #gallery-close-btn:focus {
+    background: var(--button-hover-bg);
+    color: var(--button-text-color);
+    outline: none;
+  }
+</style>
+</head>
+<body>
+<div id="app" role="main" aria-label="Cartinha celebrativa interativa">
+
+  <div id="confetti-container"></div>
+
+  <div id="balloon-container" aria-hidden="true" aria-label="Balões animados de celebração">
+    <svg class="balloon" viewBox="0 0 64 96" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+      <ellipse cx="32" cy="42" rx="28" ry="34" fill="#FF7171" filter="url(#shadow1)"/>
+      <path d="M15 72c0 10 10 18 17 18s17-8 17-18" stroke="#D34D4D" stroke-width="3" stroke-linejoin="round"/>
+      <path d="M32 0v14" stroke="#FFF5F5" stroke-width="2" stroke-linecap="round"/>
+      <defs>
+        <filter id="shadow1" x="0" y="8" width="64" height="72" color-interpolation-filters="sRGB">
+          <feDropShadow dx="0" dy="3" stdDeviation="3" flood-opacity="0.25"/>
+        </filter>
+      </defs>
+    </svg>
+    <svg class="balloon" viewBox="0 0 64 96" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+      <ellipse cx="32" cy="42" rx="28" ry="34" fill="#719BFF" filter="url(#shadow2)"/>
+      <path d="M15 72c0 10 10 18 17 18s17-8 17-18" stroke="#4B66D3" stroke-width="3" stroke-linejoin="round"/>
+      <path d="M32 0v14" stroke="#F0F6FF" stroke-width="2" stroke-linecap="round"/>
+      <defs>
+        <filter id="shadow2" x="0" y="8" width="64" height="72" color-interpolation-filters="sRGB">
+          <feDropShadow dx="0" dy="3" stdDeviation="3" flood-opacity="0.25"/>
+        </filter>
+      </defs>
+    </svg>
+    <svg class="balloon" viewBox="0 0 64 96" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+      <ellipse cx="32" cy="42" rx="28" ry="34" fill="#FDD470" filter="url(#shadow3)"/>
+      <path d="M15 72c0 10 10 18 17 18s17-8 17-18" stroke="#D3B04D" stroke-width="3" stroke-linejoin="round"/>
+      <path d="M32 0v14" stroke="#FFFEE5" stroke-width="2" stroke-linecap="round"/>
+      <defs>
+        <filter id="shadow3" x="0" y="8" width="64" height="72" color-interpolation-filters="sRGB">
+          <feDropShadow dx="0" dy="3" stdDeviation="3" flood-opacity="0.25"/>
+        </filter>
+      </defs>
+    </svg>
+    <svg class="balloon" viewBox="0 0 64 96" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+      <ellipse cx="32" cy="42" rx="28" ry="34" fill="#FFBFF1" filter="url(#shadow4)"/>
+      <path d="M15 72c0 10 10 18 17 18s17-8 17-18" stroke="#D34DA4" stroke-width="3" stroke-linejoin="round"/>
+      <path d="M32 0v14" stroke="#FFF0F9" stroke-width="2" stroke-linecap="round"/>
+      <defs>
+        <filter id="shadow4" x="0" y="8" width="64" height="72" color-interpolation-filters="sRGB">
+          <feDropShadow dx="0" dy="3" stdDeviation="3" flood-opacity="0.25"/>
+        </filter>
+      </defs>
+    </svg>
+    <svg class="balloon" viewBox="0 0 64 96" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+      <ellipse cx="32" cy="42" rx="28" ry="34" fill="#92FFD7" filter="url(#shadow5)"/>
+      <path d="M15 72c0 10 10 18 17 18s17-8 17-18" stroke="#4DB377" stroke-width="3" stroke-linejoin="round"/>
+      <path d="M32 0v14" stroke="#E9FDF8" stroke-width="2" stroke-linecap="round"/>
+      <defs>
+        <filter id="shadow5" x="0" y="8" width="64" height="72" color-interpolation-filters="sRGB">
+          <feDropShadow dx="0" dy="3" stdDeviation="3" flood-opacity="0.25"/>
+        </filter>
+      </defs>
+    </svg>
+  </div>
+
+  <div id="message" aria-live="polite" role="text"></div>
+
+  <div id="letter-container" role="button" aria-expanded="false" tabindex="0" aria-label="Clique para abrir a carta" aria-live="polite">
+    <div id="letter-front" aria-hidden="true">
+      <div id="flower-decoration" aria-hidden="true" aria-label="Decoração floral">
+        <svg width="180" height="180" viewBox="0 0 180 180" fill="none" xmlns="http://www.w3.org/2000/svg" >
+          <circle class="flower-peony" cx="50" cy="60" r="18"/>
+          <circle class="flower-peony" cx="70" cy="80" r="22"/>
+          <circle class="flower-peony" cx="100" cy="55" r="24"/>
+          <circle class="flower-peony" cx="80" cy="90" r="18"/>
+          <circle class="flower-peony" cx="60" cy="100" r="16"/>
+          <path class="flower-lily" d="M110 110c12-14 10-26 18-38" stroke="#b6c3ac" stroke-width="4" stroke-linecap="round"/>
+          <circle class="flower-lily" cx="120" cy="75" r="9" opacity="0.95"/>
+          <circle class="flower-lily" cx="103" cy="95" r="6" opacity="0.9"/>
+          <circle class="flower-lily" cx="130" cy="100" r="7" opacity="0.85"/>
+        </svg>
+      </div>
+      <div class="decorations" aria-hidden="true">
+        <div></div>
+        <div></div>
+        <div></div>
+      </div>
+    </div>
+    <div id="letter-open" tabindex="0" aria-label="Conteúdo da carta escondido"></div>
+    <button id="close-letter-btn" aria-label="Fechar a carta" title="Fechar a cartinha" tabindex="0" aria-live="polite">
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 2C8 6 2 7 2 12c0 3 3 5 8 6 5-1 8-3 8-6 0-4-6-6-6-10z" fill="currentColor"/>
+      </svg>
+      Fechar
+    </button>
+  </div>
+
+  <button id="giant-library-btn" style="display:none;" aria-label="Abrir biblioteca de imagens" tabindex="0" aria-live="polite">
+    <svg viewBox="0 0 48 48" fill="none" stroke="#fef1e7" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round" style="width:36px;height:36px;filter: drop-shadow(0 0 3px #af7c66);margin-right:8px;transform-origin:center;animation:flowerRotate 12s linear infinite;">
+      <path d="M24 2s9 8 18 19c1.5 2-4 10-9 15-1 1-6 7-6 7"/>
+      <circle cx="24" cy="29" r="7"/>
+      <path d="M21 16l-6-8-4 8" />
+      <path d="M27 16l6-8 4 8" />
+    </svg>
+    BIBLIOTECA FLORAL
+  </button>
+
+  <div id="gallery-overlay" aria-label="Galeria de fotos com tema floral" role="region" aria-live="polite" tabindex="-1">
+    <div id="gallery-header">Galeria Floral</div>
+    <div id="gallery" tabindex="0" aria-label="Galeria de imagens florais">
+      <button id="gallery-prev-btn" class="gallery-nav-btn" aria-label="Imagem anterior" tabindex="0">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false"><path d="M15 18l-6-6 6-6" stroke="#c28e73" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <img id="gallery-image" src="" alt="" />
+      <button id="gallery-next-btn" class="gallery-nav-btn" aria-label="Próxima imagem" tabindex="0">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false"><path d="M9 6l6 6-6 6" stroke="#c28e73" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </div>
+    <button id="gallery-close-btn" aria-label="Fechar galeria" tabindex="0">Fechar Galeria</button>
+  </div>
+
+  <div id="envelope-animation" aria-label="Envelope se abrindo" role="region" aria-live="polite" aria-hidden="true">
+    <div class="envelope">
+      <div class="envelope-back"></div>
+      <div class="envelope-flap"></div>
+      <div class="envelope-letter"></div>
+    </div>
+  </div>
+
+  <audio id="pop-sound" preload="auto" src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg" volume="0.2" ></audio>
+
+  <audio id="bg-music" preload="auto" loop>
+    <source src="https://cdn.pixabay.com/download/audio/2021/08/04/audio_81785e1d36.mp3?filename=happy-acoustic-ukulele-11295.mp3" type="audio/mpeg" />
+  </audio>
+
+<style>
+  /* Additional styles for gallery slider */
+
+  #gallery {
+    position: relative;
+    width: 70vw;
+    max-width: 900px;
+    height: 500px;
+    border-radius: 28px;
+    overflow: hidden;
+    box-shadow: 0 14px 38px rgba(0,0,0,0.65);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+  }
+  #gallery-image {
+    width: 100%;
+    height: 100%;
+    border-radius: 28px;
+    object-fit: cover;
+    opacity: 0;
+    transition: opacity 0.8s ease;
+  }
+  #gallery-image.visible {
+    opacity: 1;
+    z-index: 2100;
+  }
+  .gallery-nav-btn {
+    position: relative;
+    background-color: rgba(255 255 255 / 0.9);
+    border: none;
+    border-radius: 50%;
+    padding: 14px;
+    width: 48px;
+    height: 48px;
+    cursor: pointer;
+    box-shadow: 0 3px 10px rgba(161, 112, 52, 0.7);
+    user-select: none;
+    transition: background-color 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .gallery-nav-btn svg {
+    width: 24px;
+    height: 24px;
+    fill: var(--button-bg);
+  }
+  .gallery-nav-btn:hover,
+  .gallery-nav-btn:focus {
+    background-color: var(--button-bg);
+  }
+  .gallery-nav-btn:hover svg,
+  .gallery-nav-btn:focus svg {
+    fill: var(--button-text-color);
+  }
+  #gallery-prev-btn {
+    left: 16px;
+  }
+  #gallery-next-btn {
+    right: 16px;
+  }
+
+  /* Gallery close button */
+  #gallery-close-btn {
+    position: fixed;
+    top: 24px;
+    right: 28px;
+    background: rgba(255 255 255 / 0.85);
+    font-family: 'Great Vibes', cursive;
+    font-weight: 700;
+    font-size: 2.8rem;
+    padding: 8px 24px;
+    border-radius: 40px;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgba(161, 112, 52, 0.7);
+    color: #a8673c;
+    user-select: none;
+    transition: background-color 0.4s ease, color 0.4s ease;
+    z-index: 2200;
+    box-shadow: 0 4px 14px rgba(161, 112, 52, 0.85);
+  }
+  #gallery-close-btn:hover, #gallery-close-btn:focus {
+    background: var(--button-hover-bg);
+    color: var(--button-text-color);
+    outline: none;
+  }
+</style>
+</head>
+<body>
+<!-- The HTML content is above -->
+
+<script>
+(() => {
+  const confettiContainer = document.getElementById('confetti-container');
+  const balloonContainer = document.getElementById('balloon-container');
+  const messageEl = document.getElementById('message');
+  const letterContainer = document.getElementById('letter-container');
+  const letterOpen = document.getElementById('letter-open');
+  const closeLetterBtn = document.getElementById('close-letter-btn');
+  const giantLibraryBtn = document.getElementById('giant-library-btn');
+  const galleryOverlay = document.getElementById('gallery-overlay');
+  const galleryImageEl = document.getElementById('gallery-image');
+  const galleryCloseBtn = document.getElementById('gallery-close-btn');
+  const galleryPrevBtn = document.getElementById('gallery-prev-btn');
+  const galleryNextBtn = document.getElementById('gallery-next-btn');
+  const envelopeAnim = document.getElementById('envelope-animation');
+  const envelopeFlap = envelopeAnim.querySelector('.envelope-flap');
+  const envelopeLetter = envelopeAnim.querySelector('.envelope-letter');
+  const popSound = document.getElementById('pop-sound');
+  const bgMusic = document.getElementById('bg-music');
+
+  const MESSAGE_TEXT = "Surpresa! Este é um momento especial que queríamos compartilhar com você. Esperamos que esta cartinha traga muito carinho e alegria ao seu coração.";
+
+  const LETTER_TEXT = `
+    <p>Querido(a) amigo(a),</p>
+    <p>Que alegria é poder compartilhar este momento com você através desta cartinha tão especial.</p>
+    <p>Desejamos que a beleza das peônias e a delicadeza dos lírios-do-vale envolvam seu coração com amor e serenidade.</p>
+    <p>Que cada palavra aqui escrita seja um abraço suave e um carinho sincero.</p>
+    <p>Com todo carinho e admiração,</p>
+    <p><strong>Seu amigo(a) que te estima</strong></p>
+  `;
+
+  const galleryImages = [
+    'https://i.imgur.com/LcqnL2C.png',
+    'https://i.imgur.com/gVinK0o.png',
+    'https://i.imgur.com/R5P12Lm.png',
+    'https://i.imgur.com/mbavPY7.png',
+    'https://i.imgur.com/5QaSlg1.png',
+    'https://i.imgur.com/mbavPY7.png'
+  ];
+
+  popSound.volume = 0.15;
+
+  let currentGalleryIndex = 0;
+
+  function generateConfetti() {
+    const confettiCount = 100;
+    for(let i = 0; i < confettiCount; i++) {
+      const confetto = document.createElement('div');
+      confetto.classList.add('confetto');
+      confettiContainer.appendChild(confetto);
+      confetto.style.left = Math.random() * 100 + 'vw';
+      confetto.style.top = -10 - Math.random() * 10 + 'vh';
+      confetto.style.animationDelay = (Math.random() * 3) + 's';
+      confetto.style.backgroundColor = randomConfettiColor();
+      confetto.style.transform = `rotate(${Math.random()*360}deg)`;
+    }
+  }
+  function randomConfettiColor() {
+    const colors = [
+      '#ff7f7f', '#ffd8b1', '#ffe6a7', '#d7ffd9', '#d9e9ff',
+      '#fcc9c9', '#f5a28c', '#d7cfc7', '#ffcfcf', '#f7ecdb'
+    ];
+    return colors[Math.floor(Math.random()*colors.length)];
+  }
+
+  function playPopSound() {
+    popSound.currentTime = 0;
+    popSound.play();
+  }
+
+  function fadeIn(element, className='fade-in-slow') {
+    element.classList.add(className);
+  }
+  function fadeOut(element) {
+    element.classList.add('fade-out');
+  }
+
+  function clearConfetti() {
+    while(confettiContainer.firstChild) {
+      confettiContainer.removeChild(confettiContainer.firstChild);
+    }
+  }
+
+  function animateBalloons() {
+    return new Promise(resolve => {
+      balloonContainer.style.opacity = '1';
+      balloonContainer.style.pointerEvents = 'none';
+      let pops = 0;
+      const popInterval = setInterval(() => {
+        if (pops < 5) {
+          playPopSound();
+          pops++;
+        } else {
+          clearInterval(popInterval);
+        }
+      }, 600);
+      setTimeout(() => {
+        balloonContainer.style.opacity = '0';
+        resolve();
+      }, 4000);
+    });
+  }
+
+  function showMessage(text) {
+    return new Promise(resolve => {
+      messageEl.textContent = text;
+      messageEl.style.opacity = '0';
+      fadeIn(messageEl);
+      setTimeout(() => {
+        fadeOut(messageEl);
+        setTimeout(() => {
+          messageEl.textContent = '';
+          messageEl.classList.remove('fade-in-slow');
+          messageEl.classList.remove('fade-out');
+          resolve();
+        }, 2000);
+      }, 7000);
+    });
+  }
+
+  function showLetter() {
+    return new Promise(resolve => {
+      letterContainer.style.opacity = '0';
+      letterContainer.classList.add('interactive');
+      letterContainer.classList.add('fade-in-letter');
+      letterContainer.style.pointerEvents = 'auto';
+      letterContainer.style.cursor = 'pointer';
+      letterContainer.setAttribute('aria-label', 'Clique para abrir a carta');
+      letterOpen.innerHTML = '';
+      letterOpen.classList.remove('visible');
+      closeLetterBtn.style.display = 'none';
+      letterContainer.style.display = 'flex';
+      void letterContainer.offsetWidth;
+      letterContainer.style.opacity = '1';
+      resolve();
+    });
+  }
+
+  function openLetter() {
+    letterOpen.innerHTML = LETTER_TEXT;
+    letterOpen.classList.add('visible');
+    letterContainer.setAttribute('aria-expanded', 'true');
+    letterContainer.style.cursor = 'default';
+    letterContainer.classList.remove('interactive');
+    const paragraphs = letterOpen.querySelectorAll('p');
+    paragraphs.forEach((p, i) => {
+      p.style.animationDelay = (i*0.5)+'s';
+    });
+    setTimeout(() => {
+      letterOpen.focus();
+    }, 300);
+    closeLetterBtn.style.display = 'flex';
+    closeLetterBtn.style.animation = 'fadeSlideUpIn 0.7s ease forwards';
+    closeLetterBtn.focus();
+  }
+
+  function closeLetter() {
+    closeLetterBtn.style.animation = '';
+    closeLetterBtn.style.display = 'none';
+    letterOpen.classList.remove('visible');
+    letterContainer.style.transition = 'opacity 1s ease, transform 1s ease';
+    letterContainer.style.opacity = '0';
+    letterContainer.style.transform = 'scale(0.85)';
+    setTimeout(() => {
+      letterContainer.style.display = 'none';
+      letterContainer.style.opacity = '1';
+      letterContainer.style.transform = 'none';
+      letterContainer.classList.add('interactive');
+      letterContainer.setAttribute('aria-expanded', 'false');
+      giantLibraryBtn.style.display = 'flex';
+      giantLibraryBtn.focus();
+    }, 1000);
+  }
+
+  function updateGalleryImage() {
+    galleryImageEl.classList.remove('visible');
+    setTimeout(() => {
+      galleryImageEl.src = galleryImages[currentGalleryIndex];
+      galleryImageEl.alt = `Foto floral ${currentGalleryIndex + 1}`;
+      galleryImageEl.classList.add('visible');
+    }, 300);
+  }
+
+  galleryPrevBtn.addEventListener('click', () => {
+    currentGalleryIndex = (currentGalleryIndex - 1 + galleryImages.length) % galleryImages.length;
+    updateGalleryImage();
+  });
+  galleryPrevBtn.addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      galleryPrevBtn.click();
+    }
+  });
+
+  galleryNextBtn.addEventListener('click', () => {
+    currentGalleryIndex = (currentGalleryIndex + 1) % galleryImages.length;
+    updateGalleryImage();
+  });
+  galleryNextBtn.addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      galleryNextBtn.click();
+    }
+  });
+
+  giantLibraryBtn.addEventListener('click', () => {
+    giantLibraryBtn.style.display = 'none';
+    showGallery();
+  });
+  giantLibraryBtn.addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      giantLibraryBtn.click();
+    }
+  });
+
+  function showGallery() {
+    galleryOverlay.classList.add('visible');
+    galleryOverlay.focus();
+    currentGalleryIndex = 0;
+    updateGalleryImage();
+    fadeAudioVolume(bgMusic, 0.15, 1500);
+  }
+
+  galleryCloseBtn.addEventListener('click', hideGallery);
+  galleryCloseBtn.addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      hideGallery();
+    }
+  });
+
+  function hideGallery() {
+    galleryOverlay.classList.remove('visible');
+    fadeAudioVolume(bgMusic, 0.45, 1500);
+    giantLibraryBtn.style.display = 'flex';
+    giantLibraryBtn.focus();
+  }
+
+  function fadeAudioVolume(audio, targetVolume, duration) {
+    const startVolume = audio.volume;
+    const delta = targetVolume - startVolume;
+    const stepTime = 50;
+    const steps = duration / stepTime;
+    let currentStep = 0;
+
+    function step() {
+      currentStep++;
+      let newVolume = startVolume + delta * (currentStep / steps);
+      if (newVolume < 0) newVolume = 0;
+      if (newVolume > 1) newVolume = 1;
+      audio.volume = newVolume;
+      if (currentStep < steps) {
+        setTimeout(step, stepTime);
+      }
+    }
+    step();
+  }
+
+  closeLetterBtn.addEventListener('click', () => {
+    closeLetter();
+  });
+  closeLetterBtn.addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      closeLetterBtn.click();
+    }
+  });
+
+  letterContainer.addEventListener('click', () => {
+    if (!letterOpen.classList.contains('visible')) {
+      openLetter();
+    }
+  });
+  letterContainer.addEventListener('keydown', e => {
+    if ((e.key === 'Enter' || e.key === ' ') && !letterOpen.classList.contains('visible')) {
+      e.preventDefault();
+      openLetter();
+    }
+  });
+
+  async function startFlow() {
+    setTimeout(() => {
+      bgMusic.volume = 0.45;
+      bgMusic.play();
+    }, 2000);
+
+    generateConfetti();
+    await animateBalloons();
+    clearConfetti();
+    await showMessage(MESSAGE_TEXT);
+    await showLetter();
+  }
+
+  window.addEventListener('load', startFlow);
+})();
+</script>
+</body>
+</html>
+
