@@ -124,19 +124,21 @@
   }
 
   #message {
-    margin-top: 50px;
-    color: #855c3b;
-    font-size: 2.4rem;
-    max-width: 70vw;
-    opacity: 0;
-    animation-fill-mode: forwards;
-    font-family: 'Great Vibes', cursive;
-    letter-spacing: 0.08em;
-    text-shadow: 1px 1px 3px rgba(207, 180, 133, 0.6);
-    text-align: center;
-  }
+  margin: 50px auto 0 auto;
+  color: #855c3b;
+  font-size: 2.4rem;
+  max-width: 70vw;
+  opacity: 0;
+  animation-fill-mode: forwards;
+  font-family: 'Great Vibes', cursive;
+  letter-spacing: 0.08em;
+  text-shadow: 1px 1px 3px rgba(207, 180, 133, 0.6);
+  text-align: center;
+  display: block;
+}
+
   .fade-in-slow {
-    animation: fadeInSlow 4s forwards;
+    animation: fadeInSlow 6s forwards;
   }
   @keyframes fadeInSlow {
     from { opacity: 0; transform: translateY(30px); }
@@ -152,9 +154,9 @@
 
   #letter-container {
     position: relative;
-    width: 460px;
+    width: 700px;
     max-width: 90vw;
-    height: 580px;
+    height: 800px;
     background: var(--beige-soft);
     border-radius: 22px;
     box-shadow:
@@ -390,32 +392,30 @@
 
   /* Library button after close with flower details */
 
-  #giant-library-btn {
-    position: fixed;
-    bottom: 16vh;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 2.8rem;
-    padding: 18px 64px 18px 64px;
-    border-radius: 48px;
-    box-shadow: 0 6px 22px rgba(194, 142, 110, 0.55);
-    animation: fadeSlideUpIn 1.4s ease forwards, pulseGlow 2.5s ease-in-out infinite;
-    z-index: 1600;
-    user-select: none;
-    display: none;
-    background-color: var(--button-bg);
-    color: var(--button-text-color);
-    font-family: var(--button-font);
-    font-weight: 700;
-    border: none;
-    cursor: pointer;
-    text-shadow: 0 1px 1px rgba(0,0,0,0.3);
-    align-items: center;
-    gap: 16px;
-    display: flex;
-    justify-content: center;
-    position: relative;
-  }
+ #giant-library-btn {
+  position: fixed;
+  bottom: 16vh;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 2.8rem;
+  padding: 18px 64px;
+  border-radius: 48px;
+  box-shadow: 0 6px 22px rgba(194, 142, 110, 0.55);
+  animation: fadeSlideUpIn 1.4s ease forwards, pulseGlow 2.5s ease-in-out infinite;
+  z-index: 1600;
+  user-select: none;
+  background-color: var(--button-bg);
+  color: var(--button-text-color);
+  font-family: var(--button-font);
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  text-shadow: 0 1px 1px rgba(0,0,0,0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+ }
   #giant-library-btn svg {
     width: 30px;
     height: 30px;
@@ -437,7 +437,7 @@
     width: 22px;
     height: 22px;
     transform: translateY(-50%);
-    background: url('https://i.imgur.com/LcqnL2C.png') no-repeat center;
+    background: url('https://i.pinimg.com/736x/aa/09/65/aa0965864451be02a80c35ebf34c1eef.jpg') no-repeat center;
     background-size: contain;
     filter: drop-shadow(0 0 3px #af7c66);
     animation: flowerBounce 3s ease-in-out infinite;
@@ -479,7 +479,7 @@
   #gallery-overlay {
     position: fixed;
     top: 0; left: 0; right:0; bottom: 0;
-    background: url('https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80') no-repeat center center fixed;
+    background: url('https://img.freepik.com/fotos-premium/um-jardim-com-rosas-cor-de-rosa-ao-fundo_398492-1098.jpg') no-repeat center center fixed;
     background-size: cover;
     opacity: 0;
     visibility: hidden;
@@ -693,11 +693,11 @@
       <path d="M21 16l-6-8-4 8" />
       <path d="M27 16l6-8 4 8" />
     </svg>
-    BIBLIOTECA FLORAL
+    Abra!
   </button>
 
   <div id="gallery-overlay" aria-label="Galeria de fotos com tema floral" role="region" aria-live="polite" tabindex="-1">
-    <div id="gallery-header">Galeria Floral</div>
+    <div id="gallery-header">Fotos💕</div>
     <div id="gallery" tabindex="0" aria-label="Galeria de imagens florais">
       <button id="gallery-prev-btn" class="gallery-nav-btn" aria-label="Imagem anterior" tabindex="0">
         <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false"><path d="M15 18l-6-6 6-6" stroke="#c28e73" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -838,24 +838,24 @@
   const popSound = document.getElementById('pop-sound');
   const bgMusic = document.getElementById('bg-music');
 
-  const MESSAGE_TEXT = "Surpresa! Este é um momento especial que queríamos compartilhar com você. Esperamos que esta cartinha traga muito carinho e alegria ao seu coração.";
+  const MESSAGE_TEXT = "Surpresa! Feliz aniversário! 🎉🎂 Que este dia seja repleto de alegria, amor e momentos inesquecíveis. Você é uma pessoa incrível e merece tudo de bom! Aproveite cada instante e saiba que estou aqui torcendo por você sempre. ❤️";
 
   const LETTER_TEXT = `
-    <p>Querido(a) amigo(a),</p>
-    <p>Que alegria é poder compartilhar este momento com você através desta cartinha tão especial.</p>
-    <p>Desejamos que a beleza das peônias e a delicadeza dos lírios-do-vale envolvam seu coração com amor e serenidade.</p>
-    <p>Que cada palavra aqui escrita seja um abraço suave e um carinho sincero.</p>
-    <p>Com todo carinho e admiração,</p>
-    <p><strong>Seu amigo(a) que te estima</strong></p>
+    <p>Feliz aniversário, meu amor! ❤</p>
+    <p>Quero te parabenizar de todo o coração e dizer que pode contar comigo pra tudo, sempre. Mesmo à distância, estou aqui, torcendo por você, e amando cada pedacinho seu que fui conhecendo com o tempo.</p>
+    <p>Você é meiga, gentil, adorável e tem um jeito risonho que me faz sorrir só de pensar em você, algo especial me encanta cada vez mais.</p>
+    <p>Que esse aniversário seja o começo de mais um ciclo cheio de alegrias, amor e, em breve, o nosso tão esperado encontro. 💕</p>
+    <p>Aproveite bem seu dia! 😋</p>
+    <p><strong>Com carinho (e muita saudade do que ainda vamos viver). João 😋💕</strong></p>
   `;
 
   const galleryImages = [
-    'https://i.imgur.com/LcqnL2C.png',
-    'https://i.imgur.com/gVinK0o.png',
-    'https://i.imgur.com/R5P12Lm.png',
-    'https://i.imgur.com/mbavPY7.png',
-    'https://i.imgur.com/5QaSlg1.png',
-    'https://i.imgur.com/mbavPY7.png'
+    'https://i.ibb.co/LhBH0YtB/Captura-de-tela-2025-04-12-013734.png',
+    'https://i.ibb.co/Y46tCSQd/Captura-de-tela-2025-04-13-195814.png',
+    'https://i.ibb.co/1YLM45yV/Captura-de-tela-2025-04-13-195837.png',
+    'https://i.ibb.co/NgyBL3Hy/image.png',
+    'https://i.ibb.co/gZdF8nBj/Captura-de-tela-2025-04-13-031018.png',
+    'https://i.ibb.co/sdzMBrrs/Captura-de-tela-2025-04-13-202805.png'
   ];
 
   popSound.volume = 0.15;
@@ -934,7 +934,7 @@
           messageEl.classList.remove('fade-out');
           resolve();
         }, 2000);
-      }, 7000);
+      }, 12000);
     });
   }
 
